@@ -53,7 +53,14 @@ resource "aws_security_group" "this" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "this" {
-  for_each = toset(var.allowed_security_group_ids)
+  ## Fix for 'Error: Invalid for_each argument'
+  ## when using:
+  ## `for_each = toset(var.allowed_security_group_ids)`
+  ##
+  ## 'The "for_each" set includes values derived from resource attributes that cannot be
+  ## determined until apply, and so Terraform cannot determine the full set of keys that
+  ## will identify the instances of this resource.'
+  for_each = { for k, v in var.allowed_security_group_ids : k => v }
 
   security_group_id = aws_security_group.this.id
 
