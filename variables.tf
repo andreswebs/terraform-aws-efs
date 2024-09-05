@@ -22,8 +22,8 @@ variable "security_group_name_suffix" {
 }
 
 variable "subnet_ids" {
-  type    = list(string)
-  default = []
+  type = list(string)
+
   validation {
     condition     = length(var.subnet_ids) > 0
     error_message = "Must contain at least one."
@@ -31,8 +31,8 @@ variable "subnet_ids" {
 }
 
 variable "allowed_security_group_ids" {
-  type    = list(string)
-  default = []
+  type = list(string)
+
   validation {
     condition     = length(var.allowed_security_group_ids) > 0
     error_message = "Must contain at least one."
