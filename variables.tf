@@ -58,3 +58,8 @@ variable "root_dir_path" {
   type    = string
   default = "/data"
 }
+
+variable "enable_client_root_access" {
+  type    = bool
+  default = false
+}

@@ -4,13 +4,14 @@ data "aws_iam_policy_document" "client" {
     sid    = "AllowClient"
     effect = "Allow"
 
-    actions = [
+    actions = compact([
+      var.enable_client_root_access ? "elasticfilesystem:ClientRootAccess" : "",
       "elasticfilesystem:ClientMount",
       "elasticfilesystem:ClientWrite",
       "elasticfilesystem:DescribeFileSystems",
       "elasticfilesystem:DescribeMountTargets",
       "elasticfilesystem:DescribeAccessPoints",
-    ]
+    ])
 
     resources = [aws_efs_file_system.this.arn]
 

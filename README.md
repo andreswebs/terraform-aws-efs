@@ -26,6 +26,7 @@ module "efs" {
 | <a name="input_allowed_security_group_ids"></a> [allowed\_security\_group\_ids](#input\_allowed\_security\_group\_ids) | n/a | `list(string)` | n/a | yes |
 | <a name="input_app_gid"></a> [app\_gid](#input\_app\_gid) | n/a | `number` | `2000` | no |
 | <a name="input_app_uid"></a> [app\_uid](#input\_app\_uid) | n/a | `number` | `2000` | no |
+| <a name="input_enable_client_root_access"></a> [enable\_client\_root\_access](#input\_enable\_client\_root\_access) | n/a | `bool` | `false` | no |
 | <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | n/a | `string` | `null` | no |
 | <a name="input_name"></a> [name](#input\_name) | n/a | `string` | n/a | yes |
 | <a name="input_root_dir_path"></a> [root\_dir\_path](#input\_root\_dir\_path) | n/a | `string` | `"/data"` | no |
