@@ -7,6 +7,9 @@ data "aws_iam_policy_document" "client" {
     actions = [
       "elasticfilesystem:ClientMount",
       "elasticfilesystem:ClientWrite",
+      "elasticfilesystem:DescribeFileSystems",
+      "elasticfilesystem:DescribeMountTargets",
+      "elasticfilesystem:DescribeAccessPoints",
     ]
 
     resources = [aws_efs_file_system.this.arn]
@@ -24,4 +27,17 @@ data "aws_iam_policy_document" "client" {
     }
 
   }
+
+  statement {
+    sid    = "AllowDescribe"
+    effect = "Allow"
+
+    actions = [
+      "elasticfilesystem:DescribeMountTargets",
+      "elasticfilesystem:DescribeAccessPoints",
+    ]
+
+    resources = [aws_efs_access_point.this.arn]
+  }
+
 }
