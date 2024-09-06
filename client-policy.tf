@@ -1,7 +1,7 @@
 
 data "aws_iam_policy_document" "client" {
   statement {
-    sid    = "AllowClientReadWrite"
+    sid    = "AllowClient"
     effect = "Allow"
 
     actions = [
