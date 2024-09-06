@@ -39,27 +39,30 @@ variable "allowed_security_group_ids" {
   }
 }
 
-variable "app_uid" {
-  type    = number
-  default = 2000
-}
-
-variable "app_gid" {
-  type    = number
-  default = 2000
-}
-
-variable "root_dir_permissions" {
-  type    = number
-  default = 0750
-}
-
-variable "root_dir_path" {
-  type    = string
-  default = "/data"
-}
-
 variable "enable_client_root_access" {
+  type    = bool
+  default = false
+}
+
+variable "access_point_config" {
+  type = object({
+    posix_user = optional(object({
+      uid = optional(number)
+      gid = optional(number)
+    }))
+    root_directory = optional(object({
+      path = optional(string)
+      creation_info = optional(object({
+        owner_uid   = optional(number)
+        owner_gid   = optional(number)
+        permissions = optional(number)
+      }))
+    }))
+  })
+  default = null
+}
+
+variable "enable_access_point" {
   type    = bool
   default = false
 }

@@ -3,7 +3,7 @@ output "file_system" {
 }
 
 output "access_point" {
-  value = aws_efs_access_point.this
+  value = var.enable_access_point ? aws_efs_access_point.this : null
 }
 
 output "client_policy" {

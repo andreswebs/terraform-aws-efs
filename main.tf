@@ -78,19 +78,20 @@ resource "aws_efs_mount_target" "this" {
 }
 
 resource "aws_efs_access_point" "this" {
+  count          = var.enable_access_point ? 1 : 0
   file_system_id = aws_efs_file_system.this.id
 
   posix_user {
-    uid = var.app_uid
-    gid = var.app_gid
+    uid = var.access_point_config.posix_user.uid
+    gid = var.access_point_config.posix_user.gid
   }
 
   root_directory {
-    path = var.root_dir_path
+    path = var.access_point_config.root_directory.path
     creation_info {
-      owner_uid   = var.app_uid
-      owner_gid   = var.app_gid
-      permissions = var.root_dir_permissions
+      owner_uid   = var.access_point_config.root_directory.creation_info.owner_uid
+      owner_gid   = var.access_point_config.root_directory.creation_info.owner_gid
+      permissions = var.access_point_config.root_directory.creation_info.permissions
     }
   }
 }

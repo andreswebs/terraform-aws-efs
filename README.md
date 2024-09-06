@@ -23,14 +23,12 @@ module "efs" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_access_point_config"></a> [access\_point\_config](#input\_access\_point\_config) | n/a | <pre>object({<br>    posix_user = optional(object({<br>      uid = optional(number)<br>      gid = optional(number)<br>    }))<br>    root_directory = optional(object({<br>      path = optional(string)<br>      creation_info = optional(object({<br>        owner_uid   = optional(number)<br>        owner_gid   = optional(number)<br>        permissions = optional(number)<br>      }))<br>    }))<br>  })</pre> | `null` | no |
 | <a name="input_allowed_security_group_ids"></a> [allowed\_security\_group\_ids](#input\_allowed\_security\_group\_ids) | n/a | `list(string)` | n/a | yes |
-| <a name="input_app_gid"></a> [app\_gid](#input\_app\_gid) | n/a | `number` | `2000` | no |
-| <a name="input_app_uid"></a> [app\_uid](#input\_app\_uid) | n/a | `number` | `2000` | no |
+| <a name="input_enable_access_point"></a> [enable\_access\_point](#input\_enable\_access\_point) | n/a | `bool` | `false` | no |
 | <a name="input_enable_client_root_access"></a> [enable\_client\_root\_access](#input\_enable\_client\_root\_access) | n/a | `bool` | `false` | no |
 | <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | n/a | `string` | `null` | no |
 | <a name="input_name"></a> [name](#input\_name) | n/a | `string` | n/a | yes |
-| <a name="input_root_dir_path"></a> [root\_dir\_path](#input\_root\_dir\_path) | n/a | `string` | `"/data"` | no |
-| <a name="input_root_dir_permissions"></a> [root\_dir\_permissions](#input\_root\_dir\_permissions) | n/a | `number` | `750` | no |
 | <a name="input_security_group_name_suffix"></a> [security\_group\_name\_suffix](#input\_security\_group\_name\_suffix) | n/a | `string` | `"-efs-mount-target"` | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | n/a | `list(string)` | n/a | yes |
 | <a name="input_throughput_mode"></a> [throughput\_mode](#input\_throughput\_mode) | n/a | `string` | `"elastic"` | no |
