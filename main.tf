@@ -95,40 +95,24 @@ resource "aws_efs_access_point" "this" {
   }
 }
 
-locals {
-  allowed_principal_arns = length(var.allowed_principal_arns) > 0 ? var.allowed_principal_arns : ["arn:${local.partition}:iam::${local.account_id}:root"]
-}
-
 data "aws_iam_policy_document" "this" {
   statement {
-    sid    = "AllowClientReadWrite"
-    effect = "Allow"
+    effect = "Deny"
 
     principals {
       type        = "AWS"
-      identifiers = local.allowed_principal_arns
+      identifiers = ["*"]
     }
 
-    actions = [
-      "elasticfilesystem:ClientMount",
-      "elasticfilesystem:ClientWrite",
-      "elasticfilesystem:ClientRootAccess", ## note: needed by ECS
-    ]
+    actions = ["*"]
 
     resources = [aws_efs_file_system.this.arn]
 
     condition {
       test     = "Bool"
       variable = "aws:SecureTransport"
-      values   = ["true"]
+      values   = ["false"]
     }
-
-    condition {
-      test     = "StringEquals"
-      variable = "elasticfilesystem:AccessPointArn"
-      values   = [aws_efs_access_point.this.arn]
-    }
-
   }
 }
 

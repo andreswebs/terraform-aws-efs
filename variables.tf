@@ -58,8 +58,3 @@ variable "root_dir_path" {
   type    = string
   default = "/data"
 }
-
-variable "allowed_principal_arns" {
-  type    = list(string)
-  default = []
-}
