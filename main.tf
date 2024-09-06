@@ -112,6 +112,7 @@ data "aws_iam_policy_document" "this" {
     actions = [
       "elasticfilesystem:ClientMount",
       "elasticfilesystem:ClientWrite",
+      "elasticfilesystem:ClientRootAccess", ## note: needed by ECS
     ]
 
     resources = [aws_efs_file_system.this.arn]
