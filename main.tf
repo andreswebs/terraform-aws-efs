@@ -18,8 +18,6 @@ locals {
   subnet_cidrs_ipv4 = [for s in data.aws_subnet.this : s.cidr_block]
   nfs_port          = 2049
 
-  allowed_security_group_ids = compact(concat(var.allowed_security_group_ids, [aws_security_group.client.id]))
-
   sg_name_mount_target = "${var.name}-efs-mount-target"
   sg_name_client       = "${var.name}-efs-client"
 }
@@ -85,21 +83,12 @@ resource "aws_security_group" "mount_target" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "mount_target" {
-  ## Fix for 'Error: Invalid for_each argument'
-  ## when using:
-  ## `for_each = toset(var.allowed_security_group_ids)`
-  ##
-  ## 'The "for_each" set includes values derived from resource attributes that cannot be
-  ## determined until apply, and so Terraform cannot determine the full set of keys that
-  ## will identify the instances of this resource.'
-  for_each = { for k, v in local.allowed_security_group_ids : k => v }
-
   security_group_id = aws_security_group.mount_target.id
+  ip_protocol       = "tcp"
+  from_port         = local.nfs_port
+  to_port           = local.nfs_port
 
-  ip_protocol                  = "tcp"
-  from_port                    = local.nfs_port
-  to_port                      = local.nfs_port
-  referenced_security_group_id = each.value
+  referenced_security_group_id = aws_security_group.client.id
 }
 
 resource "aws_efs_mount_target" "this" {
