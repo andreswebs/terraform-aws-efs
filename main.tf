@@ -2,7 +2,7 @@ data "aws_partition" "current" {}
 data "aws_caller_identity" "current" {}
 
 data "aws_subnet" "this" {
-  for_each = toset(subnet_ids)
+  for_each = toset(var.subnet_ids)
   id       = each.value
 }
 
@@ -48,7 +48,7 @@ resource "aws_efs_backup_policy" "this" {
 }
 
 resource "aws_security_group" "client" {
-  vpc_id = data.aws_subnet.selected.vpc_id
+  vpc_id = local.vpc_id
   name   = local.sg_name_client
 
   revoke_rules_on_delete = true
@@ -70,7 +70,7 @@ resource "aws_vpc_security_group_egress_rule" "client" {
 }
 
 resource "aws_security_group" "mount_target" {
-  vpc_id = data.aws_subnet.selected.vpc_id
+  vpc_id = local.vpc_id
   name   = local.sg_name_mount_target
 
   revoke_rules_on_delete = true
