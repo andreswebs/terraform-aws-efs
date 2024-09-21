@@ -6,11 +6,15 @@ data "aws_subnet" "this" {
   id       = each.value
 }
 
+data "aws_subnet" "selected" {
+  id = var.subnet_ids[0]
+}
+
 locals {
   partition  = data.aws_partition.current.partition
   account_id = data.aws_caller_identity.current.account_id
 
-  vpc_id            = data.aws_subnet.this[0].vpc_id
+  vpc_id            = data.aws_subnet.selected.vpc_id
   subnet_cidrs_ipv4 = [for s in data.aws_subnet.this : s.cidr_block]
   nfs_port          = 2049
 
