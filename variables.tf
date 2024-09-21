@@ -16,11 +16,6 @@ variable "throughput_mode" {
   }
 }
 
-variable "security_group_name_suffix" {
-  type    = string
-  default = "-efs-mount-target"
-}
-
 variable "subnet_ids" {
   type = list(string)
 
@@ -31,12 +26,8 @@ variable "subnet_ids" {
 }
 
 variable "allowed_security_group_ids" {
-  type = list(string)
-
-  validation {
-    condition     = length(var.allowed_security_group_ids) > 0
-    error_message = "Must contain at least one."
-  }
+  type    = list(string)
+  default = []
 }
 
 variable "enable_client_root_access" {
