@@ -18,8 +18,7 @@ locals {
   subnet_cidrs_ipv4 = [for s in data.aws_subnet.this : s.cidr_block]
   nfs_port          = 2049
 
-  sg_name_mount_target = "${var.name}-efs-mount-target"
-  sg_name_client       = "${var.name}-efs-client"
+  sg_name_mount_target = var.mount_target_security_group_name != null && var.mount_target_security_group_name != "" ? var.mount_target_security_group_name : "${var.name}-efs-mount-target"
 }
 
 resource "aws_efs_file_system" "this" {
@@ -27,7 +26,7 @@ resource "aws_efs_file_system" "this" {
   encrypted        = true
   kms_key_id       = var.kms_key_arn
   throughput_mode  = var.throughput_mode
-  performance_mode = "generalPurpose"
+  performance_mode = var.performance_mode
 
   lifecycle_policy {
     transition_to_ia = "AFTER_30_DAYS"
@@ -37,9 +36,9 @@ resource "aws_efs_file_system" "this" {
     transition_to_primary_storage_class = "AFTER_1_ACCESS"
   }
 
-  tags = {
+  tags = merge(var.tags, {
     Name = var.name
-  }
+  })
 }
 
 resource "aws_efs_backup_policy" "this" {
@@ -49,46 +48,46 @@ resource "aws_efs_backup_policy" "this" {
   }
 }
 
-resource "aws_security_group" "client" {
-  vpc_id = local.vpc_id
-  name   = local.sg_name_client
-
-  revoke_rules_on_delete = true
-
-  tags = {
-    Name = local.sg_name_client
-  }
-}
-
-resource "aws_vpc_security_group_egress_rule" "client" {
-  for_each = toset(local.subnet_cidrs_ipv4)
-
-  security_group_id = aws_security_group.client.id
-
-  ip_protocol = "tcp"
-  from_port   = local.nfs_port
-  to_port     = local.nfs_port
-  cidr_ipv4   = each.value
-}
-
 resource "aws_security_group" "mount_target" {
-  vpc_id = local.vpc_id
-  name   = local.sg_name_mount_target
+  vpc_id      = local.vpc_id
+  name        = local.sg_name_mount_target
+  description = var.mount_target_security_group_description
 
   revoke_rules_on_delete = true
 
-  tags = {
+  tags = merge(var.tags, {
     Name = local.sg_name_mount_target
-  }
+  })
 }
 
 resource "aws_vpc_security_group_ingress_rule" "mount_target" {
-  security_group_id = aws_security_group.mount_target.id
-  ip_protocol       = "tcp"
-  from_port         = local.nfs_port
-  to_port           = local.nfs_port
+  for_each = toset(var.allowed_security_group_ids)
 
-  referenced_security_group_id = aws_security_group.client.id
+  description                  = "Allow access from client security group ${each.value}"
+  security_group_id            = aws_security_group.mount_target.id
+  ip_protocol                  = "tcp"
+  from_port                    = local.nfs_port
+  to_port                      = local.nfs_port
+  referenced_security_group_id = each.value
+
+  tags = merge(var.tags, {
+    Name = "from-${each.value}-to-${var.name}-efs"
+  })
+}
+
+resource "aws_vpc_security_group_egress_rule" "client" {
+  for_each = toset(var.allowed_security_group_ids)
+
+  description                  = "Allow access to ${var.name} EFS mount point security group"
+  security_group_id            = each.value
+  ip_protocol                  = "tcp"
+  from_port                    = local.nfs_port
+  to_port                      = local.nfs_port
+  referenced_security_group_id = aws_security_group.mount_target.id
+
+  tags = merge(var.tags, {
+    Name = "to-${var.name}-efs-from-${each.value}"
+  })
 }
 
 resource "aws_efs_mount_target" "this" {
@@ -103,16 +102,17 @@ resource "aws_efs_access_point" "this" {
   file_system_id = aws_efs_file_system.this.id
 
   posix_user {
-    uid = var.access_point_config.posix_user.uid
-    gid = var.access_point_config.posix_user.gid
+    uid = try(var.access_point_config.posix_user.uid, null)
+    gid = try(var.access_point_config.posix_user.gid, null)
   }
 
   root_directory {
-    path = var.access_point_config.root_directory.path
+    path = try(var.access_point_config.root_directory.path, null)
+
     creation_info {
-      owner_uid   = var.access_point_config.root_directory.creation_info.owner_uid
-      owner_gid   = var.access_point_config.root_directory.creation_info.owner_gid
-      permissions = var.access_point_config.root_directory.creation_info.permissions
+      owner_uid   = try(var.access_point_config.root_directory.creation_info.owner_uid, null)
+      owner_gid   = try(var.access_point_config.root_directory.creation_info.owner_gid, null)
+      permissions = try(var.access_point_config.root_directory.creation_info.permissions, null)
     }
   }
 }

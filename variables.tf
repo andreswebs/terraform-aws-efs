@@ -10,9 +10,20 @@ variable "kms_key_arn" {
 variable "throughput_mode" {
   type    = string
   default = "elastic"
+
   validation {
     condition     = can(regex("^(bursting|elastic)$", var.throughput_mode))
     error_message = "The input must be either 'bursting' or 'elastic'."
+  }
+}
+
+variable "performance_mode" {
+  type    = string
+  default = "generalPurpose"
+
+  validation {
+    condition     = can(regex("^(generalPurpose|maxIO)$", var.performance_mode))
+    error_message = "The input must be either 'generalPurpose' or 'maxIO'."
   }
 }
 
@@ -56,4 +67,19 @@ variable "access_point_config" {
 variable "enable_access_point" {
   type    = bool
   default = false
+}
+
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
+
+variable "mount_target_security_group_name" {
+  type    = string
+  default = null
+}
+
+variable "mount_target_security_group_description" {
+  type    = string
+  default = "EFS mount target security group"
 }
