@@ -45,7 +45,6 @@ No modules.
 |------|-------------|
 | <a name="output_access_point"></a> [access\_point](#output\_access\_point) | n/a |
 | <a name="output_client_policy_document"></a> [client\_policy\_document](#output\_client\_policy\_document) | n/a |
-| <a name="output_client_security_group"></a> [client\_security\_group](#output\_client\_security\_group) | n/a |
 | <a name="output_file_system"></a> [file\_system](#output\_file\_system) | n/a |
 
 ## Providers
