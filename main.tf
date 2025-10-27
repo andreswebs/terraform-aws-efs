@@ -13,11 +13,12 @@ data "aws_subnet" "selected" {
 locals {
   partition  = data.aws_partition.current.partition
   account_id = data.aws_caller_identity.current.account_id
+}
 
-  vpc_id            = data.aws_subnet.selected.vpc_id
-  subnet_cidrs_ipv4 = [for s in data.aws_subnet.this : s.cidr_block]
-  nfs_port          = 2049
-
+locals {
+  vpc_id               = data.aws_subnet.selected.vpc_id
+  subnet_cidrs_ipv4    = [for s in data.aws_subnet.this : s.cidr_block]
+  nfs_port             = 2049
   sg_name_mount_target = var.mount_target_security_group_name != null && var.mount_target_security_group_name != "" ? var.mount_target_security_group_name : "${var.name}-efs-mount-target"
 }
 
@@ -61,32 +62,32 @@ resource "aws_security_group" "mount_target" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "mount_target" {
-  for_each = toset(var.allowed_security_group_ids)
+  count = var.enable_allowed_security_group ? 1 : 0
 
-  description                  = "Allow access from client security group ${each.value}"
+  description                  = "Allow access to EFS from client security group ${var.allowed_security_group_id}"
   security_group_id            = aws_security_group.mount_target.id
   ip_protocol                  = "tcp"
   from_port                    = local.nfs_port
   to_port                      = local.nfs_port
-  referenced_security_group_id = each.value
+  referenced_security_group_id = var.allowed_security_group_id
 
   tags = merge(var.tags, {
-    Name = "from-${each.value}-to-${var.name}-efs"
+    Name = "from-${var.allowed_security_group_id}-to-${var.name}-efs"
   })
 }
 
 resource "aws_vpc_security_group_egress_rule" "client" {
-  for_each = toset(var.allowed_security_group_ids)
+  count = var.enable_allowed_security_group ? 1 : 0
 
   description                  = "Allow access to ${var.name} EFS mount point security group"
-  security_group_id            = each.value
+  security_group_id            = var.allowed_security_group_id
   ip_protocol                  = "tcp"
   from_port                    = local.nfs_port
   to_port                      = local.nfs_port
   referenced_security_group_id = aws_security_group.mount_target.id
 
   tags = merge(var.tags, {
-    Name = "to-${var.name}-efs-from-${each.value}"
+    Name = "to-${var.name}-efs-from-${var.allowed_security_group_id}"
   })
 }
 

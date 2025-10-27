@@ -36,9 +36,14 @@ variable "subnet_ids" {
   }
 }
 
-variable "allowed_security_group_ids" {
-  type    = list(string)
-  default = []
+variable "allowed_security_group_id" {
+  type    = string
+  default = null
+}
+
+variable "enable_allowed_security_group" {
+  type    = bool
+  default = true
 }
 
 variable "enable_client_root_access" {
