@@ -72,7 +72,7 @@ resource "aws_vpc_security_group_ingress_rule" "mount_target" {
   referenced_security_group_id = var.allowed_security_group_id
 
   tags = merge(var.tags, {
-    Name = "from-${var.allowed_security_group_id}-to-${var.name}-efs"
+    Name = "from-${var.allowed_security_group_id}"
   })
 }
 
@@ -87,7 +87,7 @@ resource "aws_vpc_security_group_egress_rule" "client" {
   referenced_security_group_id = aws_security_group.mount_target.id
 
   tags = merge(var.tags, {
-    Name = "to-${var.name}-efs-from-${var.allowed_security_group_id}"
+    Name = "to-${var.name}-efs"
   })
 }
 
