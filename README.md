@@ -25,7 +25,7 @@ module "efs" {
 | <a name="input_access_point_config"></a> [access\_point\_config](#input\_access\_point\_config) | n/a | <pre>object({<br/>    posix_user = optional(object({<br/>      uid = optional(number)<br/>      gid = optional(number)<br/>    }))<br/>    root_directory = optional(object({<br/>      path = optional(string)<br/>      creation_info = optional(object({<br/>        owner_uid   = optional(number)<br/>        owner_gid   = optional(number)<br/>        permissions = optional(number)<br/>      }))<br/>    }))<br/>  })</pre> | `null` | no |
 | <a name="input_allowed_security_group_id"></a> [allowed\_security\_group\_id](#input\_allowed\_security\_group\_id) | n/a | `string` | `null` | no |
 | <a name="input_enable_access_point"></a> [enable\_access\_point](#input\_enable\_access\_point) | n/a | `bool` | `false` | no |
-| <a name="input_enable_allowed_security_group"></a> [enable\_allowed\_security\_group](#input\_enable\_allowed\_security\_group) | n/a | `bool` | `true` | no |
+| <a name="input_enable_allowed_security_group"></a> [enable\_allowed\_security\_group](#input\_enable\_allowed\_security\_group) | n/a | `bool` | `false` | no |
 | <a name="input_enable_client_root_access"></a> [enable\_client\_root\_access](#input\_enable\_client\_root\_access) | n/a | `bool` | `false` | no |
 | <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | n/a | `string` | `null` | no |
 | <a name="input_mount_target_security_group_description"></a> [mount\_target\_security\_group\_description](#input\_mount\_target\_security\_group\_description) | n/a | `string` | `"EFS mount target security group"` | no |

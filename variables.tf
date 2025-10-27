@@ -43,7 +43,7 @@ variable "allowed_security_group_id" {
 
 variable "enable_allowed_security_group" {
   type    = bool
-  default = true
+  default = false
 }
 
 variable "enable_client_root_access" {
